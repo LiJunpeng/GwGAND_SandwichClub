@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -17,12 +18,23 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
 
+    private TextView nameTv;
+    private TextView alsoKnownTv;
+    private TextView originTv;
+    private TextView ingredientsTv;
+    private TextView descriptionTv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
         ImageView ingredientsIv = findViewById(R.id.image_iv);
+        nameTv = findViewById(R.id.name_tv);
+        alsoKnownTv = findViewById(R.id.also_known_tv);
+        originTv = findViewById(R.id.origin_tv);
+        ingredientsTv = findViewById(R.id.ingredients_tv);
+        descriptionTv = findViewById(R.id.description_tv);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -50,7 +62,7 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        populateUI();
+        populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .into(ingredientsIv);
@@ -63,7 +75,29 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
+    /**
+     * Populate UI using data retrieve from Sandwich Object
+    */
+    private void populateUI(Sandwich sandwich) {
+        nameTv.setText(sandwich.getMainName());
+        originTv.setText(sandwich.getPlaceOfOrigin());
+        descriptionTv.setText(sandwich.getDescription());
+
+        StringBuilder aliasSB = new StringBuilder();
+        for (String alia : sandwich.getAlsoKnownAs()) {
+            aliasSB.append(alia + ", ");
+        }
+        if (aliasSB.length() > 0) {
+            alsoKnownTv.setText(aliasSB.deleteCharAt(aliasSB.lastIndexOf(",")).toString());
+        }
+
+        StringBuilder ingredientsSB = new StringBuilder();
+        for (String ingredient : sandwich.getIngredients()) {
+            ingredientsSB.append(ingredient + ", ");
+        }
+        if (ingredientsSB.length() > 0) {
+            ingredientsTv.setText(ingredientsSB.deleteCharAt(ingredientsSB.lastIndexOf(",")).toString());
+        }
 
     }
 }
